@@ -16,7 +16,7 @@ resource "aws_iam_role" "codepipline-role" {
   })
 }
 
-data "aws_iam_policy_document" "tf-cicd-pipeline-policies" {
+data "aws_iam_policy_document" "tf-cicd-pipeline-policies2" {
   statement {
     sid       = ""
     actions   = ["codestar-connections:UseConnection"]
@@ -31,15 +31,15 @@ data "aws_iam_policy_document" "tf-cicd-pipeline-policies" {
   }
 }
 
-resource "aws_iam_policy" "tf-cicd-pipeline-policy" {
-  name        = "tf-cicd-pipeline-policy"
+resource "aws_iam_policy" "tf-cicd-pipeline-policy2" {
+  name        = "tf-cicd-pipeline-policy2"
   path        = "/"
   description = "Pipeline policy"
-  policy      = data.aws_iam_policy_document.tf-cicd-pipeline-policies.json
+  policy      = data.aws_iam_policy_document.tf-cicd-pipeline-policies2.json
 }
 
 resource "aws_iam_role_policy_attachment" "tf-cicd-pipeline-attachment" {
-  policy_arn = aws_iam_policy.tf-cicd-pipeline-policy.arn
+  policy_arn = aws_iam_policy.tf-cicd-pipeline-policy2.arn
   role       = aws_iam_role.codepipline-role.id
 }
 
@@ -72,15 +72,15 @@ data "aws_iam_policy_document" "tf-cicd-build-policies" {
   }
 }
 
-resource "aws_iam_policy" "tf-cicd-build-policy" {
-  name        = "tf-cicd-build-policy"
+resource "aws_iam_policy" "tf-cicd-build-policy2" {
+  name        = "tf-cicd-build-policy2"
   path        = "/"
   description = "Codebuild policy"
   policy      = data.aws_iam_policy_document.tf-cicd-build-policies.json
 }
 
 resource "aws_iam_role_policy_attachment" "tf-cicd-codebuild-attachment1" {
-  policy_arn = aws_iam_policy.tf-cicd-build-policy.arn
+  policy_arn = aws_iam_policy.tf-cicd-build-policy2.arn
   role       = aws_iam_role.tf-codebuild-role.id
 }
 
@@ -88,8 +88,6 @@ resource "aws_iam_role_policy_attachment" "tf-cicd-codebuild-attachment2" {
   policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
   role       = aws_iam_role.tf-codebuild-role.id
 }
-
-#mangler en rolle
 
 resource "aws_iam_role" "codedeploy-role" {
   name = "codedeploy-role"
@@ -99,7 +97,8 @@ resource "aws_iam_role" "codedeploy-role" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "Service" : "codedeploy.amazonaws.com"
+          "Service" : ["codedeploy.amazonaws.com",
+          "ec2.amazonaws.com"]
         },
         "Action" : "sts:AssumeRole"
       }
@@ -115,6 +114,37 @@ resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment1" {
 resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment2" {
   policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
   role       = aws_iam_role.codedeploy-role.id
+}
+
+resource "aws_iam_role_policy_attachment" "codedeploy-role-AmazonS3ReadOnlyAccess" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+  role       = aws_iam_role.codedeploy-role.id
+}
+
+data "aws_iam_policy_document" "codedeploy-document" {
+  statement {
+    sid       = "VisualEditor0"
+    effect    = "Allow"
+    actions   = ["codedeploy:CreateDeployment"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "codedeploy-create-deployment" {
+  name        = "codedeploy-create-deployment"
+  path        = "/"
+  description = "Codedeploy policy"
+  policy      = data.aws_iam_policy_document.codedeploy-document.json
+}
+
+resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment3" {
+  policy_arn = aws_iam_policy.codedeploy-create-deployment.arn
+  role       = aws_iam_role.codedeploy-role.id
+}
+
+resource "aws_iam_role_policy_attachment" "test" {
+  policy_arn = aws_iam_policy.codedeploy-create-deployment.arn
+  role       = aws_iam_role.codepipline-role.id
 }
 
 resource "aws_iam_role" "ec2-role" {
@@ -139,9 +169,16 @@ resource "aws_iam_role" "ec2-role" {
 
 resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
-  role       = aws_iam_role.codedeploy-role.id
+  role       = aws_iam_role.ec2-role.id
 }
 
+resource "aws_iam_role_policy_attachment" "codedeploy-role-deploy-attachment" {
+  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
+  role       = aws_iam_role.ec2-role.id
+}
+
+
+#bytt navn!
 data "aws_iam_policy_document" "codedeploy-document-config" {
   statement {
     sid       = "VisualEditor0"

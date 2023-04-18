@@ -5,5 +5,4 @@ resource "aws_codedeploy_deployment_config" "deployment_config" {
     type  = "HOST_COUNT"
     value = 0
   }
-
 }
