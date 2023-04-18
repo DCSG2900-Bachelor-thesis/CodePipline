@@ -25,7 +25,7 @@ variable "git_branch" {
 
 variable "bucket_name" {
   type    = string
-  default = "artifact-bucket-thea2"
+  default = "artifact-bucket-thea3"
 }
 
 variable "deployment_config_name" {

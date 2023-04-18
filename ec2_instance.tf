@@ -44,7 +44,7 @@ resource "aws_instance" "test_instance" {
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
-  name = "instance_profile"
+  name = "instance_profile2"
   role = aws_iam_role.ec2-role.name
 }
 /*
