@@ -141,3 +141,29 @@ resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
   role       = aws_iam_role.codedeploy-role.id
 }
+
+data "aws_iam_policy_document" "codedeploy-document-config" {
+  statement {
+    sid       = "VisualEditor0"
+    effect    = "Allow"
+    actions   = ["codedeploy:*"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "codedeploy-create-deployment-config" {
+  name        = "codedeploy-create-deployment-config"
+  path        = "/"
+  description = "Codedeploy policy"
+  policy      = data.aws_iam_policy_document.codedeploy-document-config.json
+}
+
+resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment5" {
+  policy_arn = aws_iam_policy.codedeploy-create-deployment-config.arn
+  role       = aws_iam_role.codepipline-role.id
+}
+
+resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment7" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  role       = aws_iam_role.ec2-role.id
+}
