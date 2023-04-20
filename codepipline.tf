@@ -42,7 +42,6 @@ resource "aws_codepipeline" "cicd_pipeline" {
 
   stage {
     name = "Deploy"
-
     action {
       name            = "Deploy"
       category        = "Deploy"
@@ -50,10 +49,24 @@ resource "aws_codepipeline" "cicd_pipeline" {
       provider        = "CodeDeploy"
       input_artifacts = ["source_output"]
       version         = "1"
-
       configuration = {
         ApplicationName     = aws_codedeploy_app.codedeploy.name
         DeploymentGroupName = var.deploy_group_name
+      }
+    }
+  }
+
+  stage {
+    name = "owasp-zap"
+    action {
+       name            = "Build"
+      category        = "Build"
+      provider        = "CodeBuild"
+      version         = "1"
+      owner           = "AWS"
+      input_artifacts = ["source_output"]
+      configuration = {
+        ProjectName = "zap-scan"
       }
     }
   }

@@ -1,6 +1,6 @@
 variable "build_name" {
   type    = string
-  default = "build2"
+  default = "build"
 }
 
 variable "build_desc" {
@@ -15,7 +15,7 @@ variable "pipeline_name" {
 
 variable "git_repo" {
   type    = string
-  default = "theaurne/juice-shop"
+  default = "SebastianHestsveen/juice-shop"
 }
 
 variable "git_branch" {
@@ -25,7 +25,7 @@ variable "git_branch" {
 
 variable "bucket_name" {
   type    = string
-  default = "artifact-bucket-thea2"
+  default = "artifact-bucket-sebastian"
 }
 
 variable "deployment_config_name" {
@@ -50,12 +50,12 @@ variable "ami" {
 
 variable "instance_type" {
   type    = string
-  default = "t3.micro"
+  default = "t3.medium"
 }
 
 variable "instance_key" {
   type    = string
-  default = "myfirstkey"
+  default = "mykey"
 }
 
 variable "vpc" {
