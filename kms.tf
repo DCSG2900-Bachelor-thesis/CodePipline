@@ -5,11 +5,11 @@ resource "aws_kms_key" "pipeline_key" {
   is_enabled               = true
 
   tags = {
-    Name = "pipeline_key"
+    Name = var.kms_key
   }
 }
 
 resource "aws_kms_alias" "key_alias" {
-  name          = "alias/pipeline-key3"
+  name          = var.kms_alias
   target_key_id = aws_kms_key.pipeline_key.key_id
 }

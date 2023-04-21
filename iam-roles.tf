@@ -204,3 +204,8 @@ resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment7" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   role       = aws_iam_role.ec2-role.id
 }
+
+#arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+/*
+paches asoiason
+*/

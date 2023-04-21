@@ -1,6 +1,6 @@
 resource "aws_instance" "test_instance" {
-  ami                             = var.ami
-  instance_type                   = var.instance_type
+  ami                             = "ami-0f960c8194f5d8df5"
+  instance_type                   = "t3.micro"
   key_name                        = var.instance_key
   iam_instance_profile = aws_iam_instance_profile.instance_profile.name
 
@@ -44,7 +44,7 @@ resource "aws_instance" "test_instance" {
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
-  name = "instance_profile2"
+  name = var.instance_profile
   role = aws_iam_role.ec2-role.name
 }
 /*
