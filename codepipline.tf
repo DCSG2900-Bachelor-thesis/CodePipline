@@ -41,6 +41,23 @@ resource "aws_codepipeline" "cicd_pipeline" {
   }
 
   stage {
+  name = "Approve"
+
+  action {
+    name     = "Approval"
+    category = "Approval"
+    owner    = "AWS"
+    provider = "Manual"
+    version  = "1"
+
+    configuration {
+      NotificationArn = aws_sns_topic.approval_notifications.arn
+      CustomData = "Review this and accept or reject"
+    }
+  }
+}
+
+  stage {
     name = "Deploy"
 
     action {
