@@ -5,7 +5,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
 
   artifact_store {
     type     = "S3"
-    location = aws_s3_bucket.codepipline_artifact.bucket
+    location = aws_s3_bucket.codepipeline_artifact.id
   }
 
   stage {
@@ -26,7 +26,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
   }
 
   stage {
-    name = "Plan"
+    name = "Test"
     action {
       name            = "Build"
       category        = "Build"
@@ -38,12 +38,8 @@ resource "aws_codepipeline" "cicd_pipeline" {
         ProjectName = "build"
       }
     }
-  }
 
-  stage {
-  name = "Approve"
-
-  action {
+    action {
     name     = "Approval"
     category = "Approval"
     owner    = "AWS"
@@ -55,10 +51,10 @@ resource "aws_codepipeline" "cicd_pipeline" {
       CustomData = "Review this and accept or reject"
     }
   }
-}
+  }
 
   stage {
-    name = "Deploy"
+    name = "Deploy to production"
 
     action {
       name            = "Deploy"
