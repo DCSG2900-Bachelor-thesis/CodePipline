@@ -3,9 +3,9 @@ resource "aws_vpc" "my_vpc" {
 }
 
 resource "aws_subnet" "my_subnet" {
-  vpc_id            = aws_vpc.my_vpc.id
-  cidr_block        = "172.16.10.0/24"
-  availability_zone = "eu-north-1a"
+  vpc_id                  = aws_vpc.my_vpc.id
+  cidr_block              = "172.16.10.0/24"
+  availability_zone       = "eu-north-1a"
   map_public_ip_on_launch = true
 }
 
@@ -49,12 +49,12 @@ resource "aws_route_table" "routing" {
 }
 
 resource "aws_route" "routing" {
-  route_table_id = aws_route_table.routing.id
+  route_table_id         = aws_route_table.routing.id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id = aws_internet_gateway.gateway.id
+  gateway_id             = aws_internet_gateway.gateway.id
 }
 
 resource "aws_route_table_association" "public" {
-   subnet_id   = aws_subnet.my_subnet.id
-   route_table_id = aws_route_table.routing.id
+  subnet_id      = aws_subnet.my_subnet.id
+  route_table_id = aws_route_table.routing.id
 }
