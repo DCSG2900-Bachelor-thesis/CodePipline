@@ -40,7 +40,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
     }
 
     action {
-      name            = "Staging and Test"
+      name            = "Staging-and-Test"
       category        = "Deploy"
       owner           = "AWS"
       provider        = "CodeDeploy"
@@ -56,7 +56,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
   stage {
     name = "Deploy"
     action {
-      name            = "Staging and Test"
+      name            = "Deploy"
       category        = "Deploy"
       owner           = "AWS"
       provider        = "CodeDeploy"
