@@ -5,7 +5,6 @@ resource "aws_codebuild_project" "build" {
 
   artifacts {
     type      = "CODEPIPELINE"
-    packaging = "ZIP"
   }
 
   environment {
