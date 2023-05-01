@@ -9,26 +9,33 @@ resource "aws_subnet" "my_subnet" {
   map_public_ip_on_launch = true
 }
 
-resource "aws_network_interface" "interface_network" {
+resource "aws_network_interface" "interface_network1" {
   subnet_id   = aws_subnet.my_subnet.id
   private_ips = ["172.16.10.100"]
+  security_groups =  ["${aws_security_group.network-security.id}"]
+}
+
+resource "aws_network_interface" "interface_network2" {
+  subnet_id   = aws_subnet.my_subnet.id
+  private_ips = ["172.16.10.101"]
+  security_groups =  ["${aws_security_group.network-security.id}"]
 }
 
 resource "aws_security_group" "network-security" {
   name_prefix = "network-security"
 
-  vpc_id = aws_vpc.my_vpc.id
+  vpc_id =  aws_vpc.my_vpc.id
 
   ingress {
-    from_port   = 22
-    to_port     = 22
+    from_port   = 0
+    to_port     = 6000
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
+  egress  {
+    from_port   = 0
+    to_port     = 6000
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
