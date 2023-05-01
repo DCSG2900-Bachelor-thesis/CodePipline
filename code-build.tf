@@ -1,6 +1,6 @@
 resource "aws_codebuild_project" "build" {
   name         = var.build_name
-  description  = var.build_desc
+  description  = "Build for project pipeline"
   service_role = aws_iam_role.tf-codebuild-role.arn
 
   artifacts {

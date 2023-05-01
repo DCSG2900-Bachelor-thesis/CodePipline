@@ -1,7 +1,9 @@
 resource "aws_instance" "test_instance" {
+
   ami                  = var.ami
   instance_type        = var.instance_type
   key_name             = var.instance_key
+
   iam_instance_profile = aws_iam_instance_profile.instance_profile.name
 
   network_interface {
@@ -64,6 +66,6 @@ resource "aws_instance" "test_instance1" {
 
 
 resource "aws_iam_instance_profile" "instance_profile" {
-  name = "instance_profile"
+  name = var.instance_profile
   role = aws_iam_role.ec2-role.name
 }

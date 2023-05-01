@@ -5,7 +5,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
 
   artifact_store {
     type     = "S3"
-    location = aws_s3_bucket.codepipline_artifact.bucket
+    location = aws_s3_bucket.codepipeline_artifact.id
   }
 
   stage {
@@ -40,8 +40,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
   }
 
   stage {
-    name = "Plan"
-    
+    name = "Test"
     action {
       name            = "Build"
       category        = "Build"
@@ -69,7 +68,6 @@ resource "aws_codepipeline" "cicd_pipeline" {
       }
       run_order = 2
     }
-
     #Deploys owasp zap so it can scan the web page 
     action {
       name            = "owasp-zap-test"
@@ -86,8 +84,22 @@ resource "aws_codepipeline" "cicd_pipeline" {
     }    
   }
 
-  stage {
+  stage { 
     name = "Deploy"
+    
+        action {
+    name     = "Approval"
+    category = "Approval"
+    owner    = "AWS"
+    provider = "Manual"
+    version  = "1"
+
+    configuration {
+      NotificationArn = aws_sns_topic.approval_notifications.arn
+      CustomData = "Review this and accept or reject"
+      }
+    }
+    
     action {
       name            = "Deploy"
       category        = "Deploy"

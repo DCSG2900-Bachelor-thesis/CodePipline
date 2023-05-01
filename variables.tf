@@ -3,14 +3,12 @@ variable "build_name" {
   default = "build"
 }
 
-variable "build_desc" {
-  type    = string
-  default = "test build"
+variable "codedeploy_app_name" {
+  type = string
 }
 
 variable "pipeline_name" {
   type    = string
-  default = "code-pipeline2"
 }
 
 variable "git_repo" {
@@ -20,7 +18,6 @@ variable "git_repo" {
 
 variable "git_branch" {
   type    = string
-  default = "master"
 }
 
 variable "bucket_name" {
@@ -30,22 +27,14 @@ variable "bucket_name" {
 
 variable "deployment_config_name" {
   type    = string
-  default = "deploy-tf-cicd"
-}
-
-variable "deployment_platform" {
-  type    = string
-  default = "EC2"
 }
 
 variable "deploy_group_name" {
   type    = string
-  default = "deploy_group1"
 }
 
-variable "ami" {
+variable "instance_key" {
   type    = string
-  default = "ami-0f960c8194f5d8df5"
 }
 
 variable "instance_type" {
@@ -58,7 +47,6 @@ variable "instance_key" {
   default = "mykey"
 }
 
-variable "vpc" {
-  type    = string
-  default = "vpc-0e86f4e2a1a764e0d"
+variable "kms_alias" {
+  type = string
 }

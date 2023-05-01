@@ -208,5 +208,4 @@ resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment7" {
 #arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
 /*
 paches asoiason
-ig gate way
 */

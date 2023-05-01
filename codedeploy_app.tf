@@ -1,5 +1,5 @@
 resource "aws_codedeploy_app" "codedeploy" {
-  name = "codedeploy"
+  name = var.codedeploy_app_name
 }
 
 resource "aws_codedeploy_app" "codedeploy1" {
