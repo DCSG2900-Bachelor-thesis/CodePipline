@@ -1,5 +1,6 @@
 variable "build_name" {
   type    = string
+  default = "build"
 }
 
 variable "codedeploy_app_name" {
@@ -12,6 +13,7 @@ variable "pipeline_name" {
 
 variable "git_repo" {
   type    = string
+  default = "SebastianHestsveen/juice-shop"
 }
 
 variable "git_branch" {
@@ -20,6 +22,7 @@ variable "git_branch" {
 
 variable "bucket_name" {
   type    = string
+  default = "artifact-bucket-sebastian"
 }
 
 variable "deployment_config_name" {
@@ -34,12 +37,14 @@ variable "instance_key" {
   type    = string
 }
 
-variable "instance_profile" {
-  type    = string  
+variable "instance_type" {
+  type    = string
+  default = "t3.medium"
 }
 
-variable "kms_key" {
-  type = string
+variable "instance_key" {
+  type    = string
+  default = "mykey"
 }
 
 variable "kms_alias" {
