@@ -15,7 +15,7 @@ variable "pipeline_name" {
 
 variable "git_repo" {
   type    = string
-  default = "SebastianHestsveen/juice-shop"
+  default = "DCSG2900-Bachelor-thesis/juice-shope"
 }
 
 variable "git_branch" {
@@ -40,7 +40,7 @@ variable "deployment_platform" {
 
 variable "deploy_group_name" {
   type    = string
-  default = "deploy_group1"
+  default = "deploy_group"
 }
 
 variable "ami" {
@@ -65,7 +65,7 @@ variable "vpc" {
 
 variable "codedeploy_app_name" {
   type = string
-  default = "deployment1"
+  default = "deployment"
 }
 
 variable "instance_profile" {
@@ -80,5 +80,5 @@ variable "kms_key" {
 
 variable "kms_alias" {
   type = string
-  default = "sebastian-key"
+  default = "alias/sebastian-key"
 }
