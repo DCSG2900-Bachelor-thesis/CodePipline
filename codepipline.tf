@@ -41,7 +41,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
 
   stage {
     name = "Test"
-    /*
+    
     action {
       name            = "Build"
       category        = "Build"
@@ -54,7 +54,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
       }
       run_order = 1
     }
-*/
+
     #depolys the web page to ec2 isntans for scaning
     action {
       name            = "staging"
@@ -99,6 +99,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
       NotificationArn = aws_sns_topic.approval_notifications.arn
       CustomData = "Review this and accept or reject"
       }
+      run_order = 1
     }
     
     action {
@@ -112,6 +113,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
         ApplicationName     = aws_codedeploy_app.codedeploy.name
         DeploymentGroupName = var.deploy_group_name
       }
+      run_order = 2
     }
   }  
 }

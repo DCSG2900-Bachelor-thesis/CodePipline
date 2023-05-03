@@ -43,6 +43,11 @@ resource "aws_iam_role_policy_attachment" "tf-cicd-pipeline-attachment" {
   role       = aws_iam_role.codepipline-role.id
 }
 
+resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment9" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSIoTDeviceDefenderPublishFindingsToSNSMitigationAction"
+  role       = aws_iam_role.codepipline-role.id
+}
+
 resource "aws_iam_role" "tf-codebuild-role" {
   name = "tf-codebuild-role"
 
@@ -205,7 +210,3 @@ resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment7" {
   role       = aws_iam_role.ec2-role.id
 }
 
-#arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
-/*
-paches asoiason
-*/
