@@ -33,7 +33,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
       output_artifacts = ["owasp"]
       configuration = {
         ConnectionArn    = aws_codestarconnections_connection.code-connection.arn
-        FullRepositoryId = "SebastianHestsveen/buildspec"
+        FullRepositoryId = "DCSG2900-Bachelor-thesis/OWASP-Zap-appspec"
         BranchName       = var.git_branch
       }
     }
@@ -41,6 +41,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
 
   stage {
     name = "Test"
+    
     action {
       name            = "Build"
       category        = "Build"
@@ -94,10 +95,11 @@ resource "aws_codepipeline" "cicd_pipeline" {
     provider = "Manual"
     version  = "1"
 
-    configuration {
+    configuration = {
       NotificationArn = aws_sns_topic.approval_notifications.arn
       CustomData = "Review this and accept or reject"
       }
+      run_order = 1
     }
     
     action {
@@ -111,6 +113,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
         ApplicationName     = aws_codedeploy_app.codedeploy.name
         DeploymentGroupName = var.deploy_group_name
       }
+      run_order = 2
     }
   }  
 }
