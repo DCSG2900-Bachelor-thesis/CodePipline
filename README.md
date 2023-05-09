@@ -1,10 +1,10 @@
-#CodePipeline
+# CodePipeline
 This project is a practical component of a bachelor's project.
 
-#Preconceptions
+# Preconceptions
 Assuming that you have Terraform and AWS CLI installed and set up.
 
-#Build
+# Build
 Here are the steps you need to follow to build the project:
 
 Initialize the repository:
