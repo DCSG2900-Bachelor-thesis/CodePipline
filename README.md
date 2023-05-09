@@ -1,1 +1,17 @@
-# terraform
+#CodePipeline
+This project is a practical component of a bachelor's project.
+
+#Preconceptions
+Assuming that you have Terraform and AWS CLI installed and set up.
+
+#Build
+Here are the steps you need to follow to build the project:
+
+Initialize the repository:
+`terraform init`
+
+Plan the deployment:
+`terraform plan`
+
+Deploy the project:
+`terraform apply`
