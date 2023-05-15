@@ -28,9 +28,22 @@ data "aws_iam_policy_document" "codepipeline-policy-document" {
     effect    = "Allow"
   }
   statement {
+    sid = ""
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:GetBucketLocation",
+    ]
+    resources = ["${aws_s3_bucket.codepipeline_artifact.arn}/*"]
+    effect    = "Allow"
+  }
+  statement {
     sid       = ""
-    actions   = ["s3:*", "codebuild:*", ]
-    resources = ["${aws_s3_bucket.codepipeline_artifact.arn}/*", aws_codebuild_project.build.arn]
+    actions   = [
+      "codebuild:StartBuild",
+      "codebuild:BatchGetBuilds",
+    ]
+    resources = [aws_codebuild_project.build.arn]
     effect    = "Allow"
   }
   statement {
@@ -90,7 +103,7 @@ EOF
 data "aws_iam_policy_document" "codebuild-policies-document" {
   statement {
     sid       = ""
-    actions   = ["s3:*", "codebuild:*", "logs:*"]
+    actions   = ["s3:*","codebuild:*", "logs:*"]
     resources = [aws_codebuild_project.build.arn]
     effect    = "Allow"
   }
