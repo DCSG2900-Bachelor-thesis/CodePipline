@@ -124,7 +124,10 @@ data "aws_iam_policy_document" "codebuild-policies-document" {
   }
   statement {
     sid       = ""
-    actions   = ["logs:*"]
+    actions   = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
     resources = ["*"]
     effect    = "Allow"
   }
