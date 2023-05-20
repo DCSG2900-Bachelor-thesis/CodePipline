@@ -1,3 +1,4 @@
+#Create a build project
 resource "aws_codebuild_project" "build" {
   name         = var.build_name
   description  = "Build for project pipeline"
@@ -7,6 +8,7 @@ resource "aws_codebuild_project" "build" {
     type      = "CODEPIPELINE"
   }
 
+  #Specify the build environment
   environment {
     compute_type                = "BUILD_GENERAL1_SMALL"
     image                       = "aws/codebuild/standard:6.0"

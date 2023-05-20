@@ -1,3 +1,4 @@
+#Create the EC2 instances
 resource "aws_instance" "test_instance" {
 
   ami                  = var.ami
@@ -14,7 +15,7 @@ resource "aws_instance" "test_instance" {
   tags = {
     "Name" = "test_instance"
   }
-  #dns hostnames
+  #DNS hostnames
   user_data = <<-EOF
         #!/bin/bash
         echo "start codedeploy agenet install"
@@ -44,7 +45,7 @@ resource "aws_instance" "test_instance1" {
   tags = {
     "Name" = "test_instance1"
   }
-  #dns hostnames
+  #DNS hostnames
   user_data = <<-EOF
         #!/bin/bash
         echo "start codedeploy agenet install"

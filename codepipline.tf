@@ -1,3 +1,4 @@
+#Create the CodePipeline
 resource "aws_codepipeline" "cicd_pipeline" {
 
   name     = var.pipeline_name
@@ -55,7 +56,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
       run_order = 1
     }
 
-    #depolys the web page to ec2 isntans for scaning
+    #Deploys the web page to EC2 instance for scanning 
     action {
       name            = "staging"
       category        = "Deploy"
@@ -69,7 +70,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
       }
       run_order = 2
     }
-    #Deploys owasp zap so it can scan the web page 
+    #Deploys OWASP ZAP for scanning the web page 
     action {
       name            = "owasp-zap-test"
       category        = "Deploy"
@@ -88,16 +89,17 @@ resource "aws_codepipeline" "cicd_pipeline" {
   stage { 
     name = "Deploy"
     
-        action {
-    name     = "Approval"
-    category = "Approval"
-    owner    = "AWS"
-    provider = "Manual"
-    version  = "1"
+    #Set up the manual approval
+    action {
+      name     = "Approval"
+      category = "Approval"
+      owner    = "AWS"
+      provider = "Manual"
+      version  = "1"
 
-    configuration = {
-      NotificationArn = aws_sns_topic.approval_notifications.arn
-      CustomData = "Review this and accept or reject"
+      configuration = {
+        NotificationArn = aws_sns_topic.approval_notifications.arn
+        CustomData = "Review this and accept or reject"
       }
       run_order = 1
     }

@@ -1,3 +1,4 @@
+#Create the deployment configurations
 resource "aws_codedeploy_deployment_config" "deployment_config" {
   deployment_config_name = var.deployment_config_name
 
