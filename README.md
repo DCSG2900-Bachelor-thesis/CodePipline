@@ -7,7 +7,7 @@ Also assume you have a variables.tfvars file for definitions of your variables (
 
 # Including the Juice-Shop repository
 The Juice-Shop repository can be forked from https://github.com/juice-shop/juice-shop  
-For this project, some additional files, like the appspec file, is added. These can be found under the juice-shop repository in this organization: https://github.com/DCSG2900-Bachelor-thesis/juice-shope
+For this project, some additional files, like the appspec file, is added. These can be found under the juice-shop-appspec repository in this organization: https://github.com/DCSG2900-Bachelor-thesis/juice-shope-appspec
 
 # Build
 Here are the steps you need to follow to build the project:
