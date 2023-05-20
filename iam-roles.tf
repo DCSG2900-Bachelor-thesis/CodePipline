@@ -32,14 +32,13 @@ data "aws_iam_policy_document" "codepipeline-policy-document" {
     actions = [
       "s3:GetObject",
       "s3:PutObject",
-      "s3:GetBucketLocation",
     ]
     resources = ["${aws_s3_bucket.codepipeline_artifact.arn}/*"]
     effect    = "Allow"
   }
   statement {
-    sid       = ""
-    actions   = [
+    sid = ""
+    actions = [
       "codebuild:StartBuild",
       "codebuild:BatchGetBuilds",
     ]
@@ -53,11 +52,24 @@ data "aws_iam_policy_document" "codepipeline-policy-document" {
     effect    = "Allow"
   }
   statement {
-    sid       = "VisualEditor0"
-    effect    = "Allow"
-    actions   = ["codedeploy:*"]
-    resources = [aws_codedeploy_deployment_group.deploy_group.arn, aws_codedeploy_deployment_group.deploy_group1.arn]
+    sid     = ""
+    effect  = "Allow"
+    actions = ["codedeploy:GetDeploymentConfig"]
+    resources = ["*"]
   }
+  statement {
+    sid = ""
+    effect = "Allow"
+    actions = ["codedeploy:RegisterApplicationRevision","codedeploy:GetApplicationRevision"]
+    resources = [aws_codedeploy_app.codedeploy.arn, aws_codedeploy_app.codedeploy1.arn]
+  }
+  statement {
+    sid = ""
+    effect = "Allow"
+    actions = ["codedeploy:GetDeployment"]
+    resources = [ aws_codedeploy_deployment_group.deploy_group.arn, aws_codedeploy_deployment_group.deploy_group1.arn ]
+  }
+  #aws_codedeploy_deployment_group.deploy_group.arn, aws_codedeploy_deployment_group.deploy_group1.arn
 }
 
 resource "aws_iam_policy" "codepipline-policy" {
@@ -102,9 +114,26 @@ EOF
 
 data "aws_iam_policy_document" "codebuild-policies-document" {
   statement {
-    sid       = ""
-    actions   = ["s3:*","codebuild:*", "logs:*"]
+    sid = ""
+    actions = [
+      "codebuild:StartBuild",
+      "codebuild:StopBuild",
+    ]
     resources = [aws_codebuild_project.build.arn]
+    effect    = "Allow"
+  }
+  statement {
+    sid       = ""
+    actions   = ["logs:*"]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+  statement {
+    sid = ""
+    actions = [
+      "s3:GetObject",
+    ]
+    resources = ["${aws_s3_bucket.codepipeline_artifact.arn}/*"]
     effect    = "Allow"
   }
 }
