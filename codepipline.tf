@@ -42,7 +42,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
 
   stage {
     name = "Test"
-    
+
     action {
       name            = "Build"
       category        = "Build"
@@ -83,12 +83,11 @@ resource "aws_codepipeline" "cicd_pipeline" {
         DeploymentGroupName = "deploy_group1"
       }
       run_order = 3
-    }    
+    }
   }
 
-  stage { 
+  stage {
     name = "Deploy"
-    
     #Set up the manual approval
     action {
       name     = "Approval"
@@ -103,7 +102,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
       }
       run_order = 1
     }
-    
+
     action {
       name            = "Deploy"
       category        = "Deploy"
@@ -117,5 +116,5 @@ resource "aws_codepipeline" "cicd_pipeline" {
       }
       run_order = 2
     }
-  }  
+  }
 }
