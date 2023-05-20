@@ -1,3 +1,4 @@
+#iam policy for the codepipline
 resource "aws_iam_role" "codepipline-role" {
   name = "codepipline-role"
 
@@ -9,47 +10,90 @@ resource "aws_iam_role" "codepipline-role" {
         Effect = "Allow"
         Sid    = ""
         Principal = {
-          Service = "codepipeline.amazonaws.com"
+          Service = [
+            "codepipeline.amazonaws.com",
+          ]
         }
       },
     ]
   })
 }
 
-data "aws_iam_policy_document" "tf-cicd-pipeline-policies2" {
+#Allows the pipeline to access the S3 bucket, codebuild,codestar-connection and sns polesis
+data "aws_iam_policy_document" "codepipeline-policy-document" {
   statement {
     sid       = ""
     actions   = ["codestar-connections:UseConnection"]
-    resources = ["*"]
+    resources = [aws_codestarconnections_connection.code-connection.arn]
+    effect    = "Allow"
+  }
+  statement {
+    sid = ""
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+    ]
+    resources = ["${aws_s3_bucket.codepipeline_artifact.arn}/*"]
+    effect    = "Allow"
+  }
+  statement {
+    sid = ""
+    actions = [
+      "codebuild:StartBuild",
+      "codebuild:BatchGetBuilds",
+    ]
+    resources = [aws_codebuild_project.build.arn]
     effect    = "Allow"
   }
   statement {
     sid       = ""
-    actions   = ["s3:*", "codebuild:*", ]
-    resources = ["*"]
+    actions   = ["sns:Publish"]
+    resources = [aws_sns_topic.approval_notifications.arn]
     effect    = "Allow"
   }
+  statement {
+    sid     = ""
+    effect  = "Allow"
+    actions = ["codedeploy:GetDeploymentConfig"]
+    resources = ["*"]
+  }
+  statement {
+    sid = ""
+    effect = "Allow"
+    actions = ["codedeploy:RegisterApplicationRevision","codedeploy:GetApplicationRevision"]
+    resources = [aws_codedeploy_app.codedeploy.arn, aws_codedeploy_app.codedeploy1.arn]
+  }
+  statement {
+    sid = ""
+    effect = "Allow"
+    actions = ["codedeploy:GetDeployment"]
+    resources = [ aws_codedeploy_deployment_group.deploy_group.arn, aws_codedeploy_deployment_group.deploy_group1.arn ]
+  }
+  #aws_codedeploy_deployment_group.deploy_group.arn, aws_codedeploy_deployment_group.deploy_group1.arn
 }
 
-resource "aws_iam_policy" "tf-cicd-pipeline-policy2" {
-  name        = "tf-cicd-pipeline-policy2"
+resource "aws_iam_policy" "codepipline-policy" {
+  name        = "codepipline-policy"
   path        = "/"
-  description = "Pipeline policy"
-  policy      = data.aws_iam_policy_document.tf-cicd-pipeline-policies2.json
+  description = "Allows the pipeline to access the S3 bucket and CodeBuild agent."
+  policy      = data.aws_iam_policy_document.codepipeline-policy-document.json
 }
 
 resource "aws_iam_role_policy_attachment" "tf-cicd-pipeline-attachment" {
-  policy_arn = aws_iam_policy.tf-cicd-pipeline-policy2.arn
+  policy_arn = aws_iam_policy.codepipline-policy.arn
   role       = aws_iam_role.codepipline-role.id
 }
 
-resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment9" {
+#Let the CodePipeline publish to the SNS topic.
+resource "aws_iam_role_policy_attachment" "codepipeline-policies-attachment-sns-topic" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSIoTDeviceDefenderPublishFindingsToSNSMitigationAction"
   role       = aws_iam_role.codepipline-role.id
 }
 
-resource "aws_iam_role" "tf-codebuild-role" {
-  name = "tf-codebuild-role"
+
+#iam policy for codebuild ------------------------------------------------------------------------------------------------------------------
+resource "aws_iam_role" "codebuild-role" {
+  name = "codebuild-role"
 
   assume_role_policy = <<EOF
 {
@@ -68,32 +112,45 @@ resource "aws_iam_role" "tf-codebuild-role" {
 EOF
 }
 
-data "aws_iam_policy_document" "tf-cicd-build-policies" {
+data "aws_iam_policy_document" "codebuild-policies-document" {
+  statement {
+    sid = ""
+    actions = [
+      "codebuild:StartBuild",
+      "codebuild:StopBuild",
+    ]
+    resources = [aws_codebuild_project.build.arn]
+    effect    = "Allow"
+  }
   statement {
     sid       = ""
-    actions   = ["logs:*", "s3:*", "codebuild:*", "secretsmanager:*", "iam:*"]
+    actions   = ["logs:*"]
     resources = ["*"]
+    effect    = "Allow"
+  }
+  statement {
+    sid = ""
+    actions = [
+      "s3:GetObject",
+    ]
+    resources = ["${aws_s3_bucket.codepipeline_artifact.arn}/*"]
     effect    = "Allow"
   }
 }
 
-resource "aws_iam_policy" "tf-cicd-build-policy2" {
-  name        = "tf-cicd-build-policy2"
+resource "aws_iam_policy" "codebuild-policy" {
+  name        = "codebuild-policy"
   path        = "/"
-  description = "Codebuild policy"
-  policy      = data.aws_iam_policy_document.tf-cicd-build-policies.json
+  description = "Codebuild policy that alows the codebuild agent to acses the s3 bucket and codebuild resosses"
+  policy      = data.aws_iam_policy_document.codebuild-policies-document.json
 }
 
-resource "aws_iam_role_policy_attachment" "tf-cicd-codebuild-attachment1" {
-  policy_arn = aws_iam_policy.tf-cicd-build-policy2.arn
-  role       = aws_iam_role.tf-codebuild-role.id
+resource "aws_iam_role_policy_attachment" "codebuild-attachment" {
+  policy_arn = aws_iam_policy.codebuild-policy.arn
+  role       = aws_iam_role.codebuild-role.id
 }
 
-resource "aws_iam_role_policy_attachment" "tf-cicd-codebuild-attachment2" {
-  policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
-  role       = aws_iam_role.tf-codebuild-role.id
-}
-
+#codedeploy roles -------------------------------------------------------------------------------------------------------------------------
 resource "aws_iam_role" "codedeploy-role" {
   name = "codedeploy-role"
   assume_role_policy = jsonencode({
@@ -102,8 +159,10 @@ resource "aws_iam_role" "codedeploy-role" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "Service" : ["codedeploy.amazonaws.com",
-          "ec2.amazonaws.com"]
+          "Service" : [
+            "codedeploy.amazonaws.com",
+            "ec2.amazonaws.com"
+          ]
         },
         "Action" : "sts:AssumeRole"
       }
@@ -111,27 +170,12 @@ resource "aws_iam_role" "codedeploy-role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment1" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
-  role       = aws_iam_role.codedeploy-role.id
-}
-
-resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment2" {
-  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
-  role       = aws_iam_role.codedeploy-role.id
-}
-
-resource "aws_iam_role_policy_attachment" "codedeploy-role-AmazonS3ReadOnlyAccess" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
-  role       = aws_iam_role.codedeploy-role.id
-}
-
 data "aws_iam_policy_document" "codedeploy-document" {
   statement {
     sid       = "VisualEditor0"
     effect    = "Allow"
     actions   = ["codedeploy:CreateDeployment"]
-    resources = ["*"]
+    resources = [aws_codedeploy_deployment_group.deploy_group.arn, aws_codedeploy_deployment_group.deploy_group1.arn]
   }
 }
 
@@ -142,16 +186,38 @@ resource "aws_iam_policy" "codedeploy-create-deployment" {
   policy      = data.aws_iam_policy_document.codedeploy-document.json
 }
 
-resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment3" {
+#atach the policy dockument we made
+resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment" {
   policy_arn = aws_iam_policy.codedeploy-create-deployment.arn
   role       = aws_iam_role.codedeploy-role.id
 }
 
-resource "aws_iam_role_policy_attachment" "test" {
+#Lets codepipline interact with codedeploy
+resource "aws_iam_role_policy_attachment" "codedeploy-role-codepipeline" {
   policy_arn = aws_iam_policy.codedeploy-create-deployment.arn
   role       = aws_iam_role.codepipline-role.id
 }
 
+#Lets us use codedeploy
+resource "aws_iam_role_policy_attachment" "codedeploy-role-codedeploy" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+  role       = aws_iam_role.codedeploy-role.id
+}
+
+#lets us interact with ECS
+resource "aws_iam_role_policy_attachment" "codedeploy-role-ECS" {
+  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
+  role       = aws_iam_role.codedeploy-role.id
+}
+
+#Lets us read form ouer s3 bucket
+resource "aws_iam_role_policy_attachment" "codedeploy-role-AmazonS3ReadOnlyAccess" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+  role       = aws_iam_role.codedeploy-role.id
+}
+
+
+#Role for ec2 insteanses-------------------------------------------------------------------------------------------------------------------------
 resource "aws_iam_role" "ec2-role" {
   name = "ec2-role"
   assume_role_policy = jsonencode({
@@ -172,40 +238,17 @@ resource "aws_iam_role" "ec2-role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment" {
+resource "aws_iam_role_policy_attachment" "ec2-attachment-s3-readonly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
   role       = aws_iam_role.ec2-role.id
 }
 
-resource "aws_iam_role_policy_attachment" "codedeploy-role-deploy-attachment" {
+resource "aws_iam_role_policy_attachment" "ec2-attachment-deployRole" {
   policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
   role       = aws_iam_role.ec2-role.id
 }
 
-
-#bytt navn!
-data "aws_iam_policy_document" "codedeploy-document-config" {
-  statement {
-    sid       = "VisualEditor0"
-    effect    = "Allow"
-    actions   = ["codedeploy:*"]
-    resources = ["*"]
-  }
-}
-
-resource "aws_iam_policy" "codedeploy-create-deployment-config" {
-  name        = "codedeploy-create-deployment-config"
-  path        = "/"
-  description = "Codedeploy policy"
-  policy      = data.aws_iam_policy_document.codedeploy-document-config.json
-}
-
-resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment5" {
-  policy_arn = aws_iam_policy.codedeploy-create-deployment-config.arn
-  role       = aws_iam_role.codepipline-role.id
-}
-
-resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment7" {
+resource "aws_iam_role_policy_attachment" "ec2-attachment-instentmanger" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   role       = aws_iam_role.ec2-role.id
 }

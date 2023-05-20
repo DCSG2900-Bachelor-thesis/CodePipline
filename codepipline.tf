@@ -41,7 +41,7 @@ resource "aws_codepipeline" "cicd_pipeline" {
 
   stage {
     name = "Test"
-    
+
     action {
       name            = "Build"
       category        = "Build"
@@ -82,26 +82,26 @@ resource "aws_codepipeline" "cicd_pipeline" {
         DeploymentGroupName = "deploy_group1"
       }
       run_order = 3
-    }    
+    }
   }
 
-  stage { 
+  stage {
     name = "Deploy"
-    
-        action {
-    name     = "Approval"
-    category = "Approval"
-    owner    = "AWS"
-    provider = "Manual"
-    version  = "1"
 
-    configuration = {
-      NotificationArn = aws_sns_topic.approval_notifications.arn
-      CustomData = "Review this and accept or reject"
+    action {
+      name     = "Approval"
+      category = "Approval"
+      owner    = "AWS"
+      provider = "Manual"
+      version  = "1"
+
+      configuration = {
+        NotificationArn = aws_sns_topic.approval_notifications.arn
+        CustomData      = "Review this and accept or reject"
       }
       run_order = 1
     }
-    
+
     action {
       name            = "Deploy"
       category        = "Deploy"
@@ -115,5 +115,5 @@ resource "aws_codepipeline" "cicd_pipeline" {
       }
       run_order = 2
     }
-  }  
+  }
 }

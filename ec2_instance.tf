@@ -1,8 +1,8 @@
 resource "aws_instance" "test_instance" {
 
-  ami                  = var.ami
-  instance_type        = var.instance_type
-  key_name             = var.instance_key
+  ami           = var.ami
+  instance_type = var.instance_type
+  key_name      = var.instance_key
 
   iam_instance_profile = aws_iam_instance_profile.instance_profile.name
 
